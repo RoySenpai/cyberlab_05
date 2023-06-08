@@ -1,6 +1,8 @@
 import sys
 import create_attachment
 import smtplib, ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 """
 creates the mail and sends the mail.
@@ -13,13 +15,14 @@ def function(array):
     job_title = sys.argv[4]
     personal_status = sys.argv[5]
     kids = sys.argv[6]
+    mail_sender_address = "labcyber523@gmail.com"
+    application_key = "avowmnjsepifvwhi"
+    mail_receiver_address = username + "@" + mail_service_name
 
-    # load mail cotent + insert the username + insert attachment
-
-    #fp = open("scam.html", "r")
-    #content = fp.read()
-
-    #content.replace("user", username)
+    fp = open("scam.html", "r")
+    content = fp.read()
+    content.replace("user", username)
+    fp.close()
 
     #create_attachment()
     port = 465  # For SSL
@@ -27,8 +30,8 @@ def function(array):
     context = ssl.create_default_context()
 
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
-        server.login("labcyber523@gmail.com", "avowmnjsepifvwhi")
-        server.sendmail("labcyber523@gmail.com", "lidorky22@gmail.com", "hello")
+        server.login(mail_sender_address, application_key)
+        server.sendmail(mail_sender_address, mail_receiver_address, content)
 
 
 
