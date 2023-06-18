@@ -6,7 +6,6 @@ from requests import get
 from scapy.all import *
 from scapy.layers.dns import DNS, DNSQR, DNSRR
 from scapy.layers.inet import UDP, IP
-import winreg
 
 DNS_port = 53
 DNS_server_ip = "10.0.2.5"
