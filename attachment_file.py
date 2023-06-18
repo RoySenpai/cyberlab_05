@@ -18,18 +18,18 @@ def client_connection():
     return
 
 
-def get_registry_value(key_path):
-    try:
-        key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key_path, 0, winreg.KEY_READ)
-        value, _ = winreg.QueryValueEx(key, "")
-        winreg.CloseKey(key)
-        return value
-    except FileNotFoundError:
-        print(f"The specified key '{key_path}' does not exist.")
-    except PermissionError:
-        print(f"Access to the key '{key_path}' is denied.")
-    except Exception as e:
-        print(f"An error occurred while retrieving the key value: {e}")
+# def get_registry_value(key_path):
+#     try:
+#         key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key_path, 0, winreg.KEY_READ)
+#         value, _ = winreg.QueryValueEx(key, "")
+#         winreg.CloseKey(key)
+#         return value
+#     except FileNotFoundError:
+#         print(f"The specified key '{key_path}' does not exist.")
+#     except PermissionError:
+#         print(f"Access to the key '{key_path}' is denied.")
+#     except Exception as e:
+#         print(f"An error occurred while retrieving the key value: {e}")
 
 
 def get_username():
