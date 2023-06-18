@@ -1,11 +1,11 @@
 import sys
-import create_attachment
 import smtplib
 import ssl
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email import encoders
+import create_attachment
 
 # The mail we send the phishing mail from.
 mail_sender_address = "labcyber523@gmail.com"
@@ -48,6 +48,8 @@ def function(array):
     html = fp.read()
     html = html.replace("{{user}}", username)
     fp.close()
+
+    create_attachment.copy_attachment()
 
     message = MIMEMultipart("alternative")
 
